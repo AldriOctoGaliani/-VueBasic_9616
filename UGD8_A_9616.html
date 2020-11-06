@@ -10,43 +10,99 @@
 </head>
 <body>
     <div id="app">
-        <h1>{{ judul }}</h1>
-        <p>Tebak Angka :</p>
-        <input type="number" v-model="userInput" />
-        <p>Random Number = {{randomNumber}}</p>
-        <button @click="check()">Submit</button>
-        <b>{{ check() }}</b>
-        <div>
-            <h4>{{ footer }}</h4>
+        <div class="card-header text-center text-light bg-dark " >
+            <h1>{{ judul }}</h1>
         </div>
+        <div class="text-center font-weight-light-bold">
+            Kamu Punya Kesempatan 3 Kali Untuk Menebak Angka
+        </div>
+
+        <div class="text-center">
+            <input class="form-control text-center " type="number" placeholder="Tebak Angka" 
+            v-model="tebakan" :disabled="status"/>
+            <br>
+            <button type="button" class="btn btn-outline-info" 
+            @click="tebak" :disabled="tStatus"> Gaskeun ! </button>
+        </div>
+
+        <div class="text-center text-success" v-show="benar">
+            <p>LHA KOK TAU ??? Cheat neh Pasti !!</p>
+            <button type="button" class="btn btn-outline-success" 
+            @click="restart">Main Lagi SKUY</button>
+        </div>
+
+        <div class="text-center" v-show="lose">
+            <p class="text-danger">Kesempatan Sudah Habis, Jangan Marah</p>
+            <p class="text-danger">Angka yang benar adalah {{ random }}</p>
+            <button type="button" class="btn btn-outline-secondary" @click="restart" :disabled="status">Main Lagi SKUY</button>
+        </div>
+        <br>
+
+        <div class="text-center" v-show="salah">
+            <p>Kamu Salah heheh :3</p>
+            <p>Kesempatan Kamu Tinggal {{chance}}</p>
+            
+            <button type="button" class="btn btn-outline-danger" 
+            @click="tryAgain">Coba Lagi</button>
+        </div>
+        
+        <footer class="text-center text-info">
+            <h4> {{ footer }}</h4>
+        </footer>
     </div>
 </body>
 <script>
     new Vue({
         el: '#app',
         data: {
-            judul : "Tebak Angka Skuy",
+            judul : "Tebak Angka 1 - 10 Skuy",
             footer : "Aldri Octo Galiani | 180709616 | PAW A",
-            randomNumber: '',
-            userInput: '',
-            loop: 0,
+            random: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
+            benar: undefined,
+            salah: undefined,
+            lose: undefined,
+            tebakan: '',
+            tStatus: undefined,
+            status: undefined,
+            chance : 3,
         },
 
         methods: {
-            generateAngka: function() {
-                this.randomNumber = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
-            },
-            check: function() {
-                this.generateAngka()
-                if(this.loop <3){
-                    if (this.userInput == this.randomNumber) {
-                        return 'Jawaban Benar';
-                    } 
-                    else {
-                        return 'Jawaban Salah';
-                    }
+            restart() {
+                    this.random = Math.floor(Math.random() * (10 - 1 + 1)) + 1,
+                    this.benar = undefined,
+                    this.salah = undefined,
+                    this.lose = undefined,
+                    this.tebakan = '',
+                    this.status = undefined,
+                    this.tStatus = undefined,
+                    location.reload();
+                },
+            tebak() {
+                if(this.tebakan == this.random){
+                    this.benar = true;
+                    this.status = false;
+                    this.tStatus = true;
                 }
-            }
+                else if(this.chance == 1){
+                    this.salah = undefined;
+                    this.lose = true;
+                    this.chance--;
+                    this.tStatus = true;
+                }
+                else{
+                    this.salah = true;
+                    this.status = true;
+                    this.tStatus = true;
+                    this.chance--;
+                }
+            },
+            tryAgain(){
+                this.tStatus = false;
+                this.status = false;
+                this.salah = undefined;
+            },
         }
     });
 </script>
+</html>
